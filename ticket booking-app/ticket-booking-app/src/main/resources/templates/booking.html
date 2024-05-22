@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Booking</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    <script src="/js/script.js"></script>
+</head>
+<body>
+    <h1>Booking</h1>
+    <form action="/api/bookings" method="post">
+        <input type="hidden" name="userId" value="" id="userId">
+        <label for="movie">Movie:</label>
+        <input type="text" id="movie" name="movie" required>
+        <label for="seats">Seats:</label>
+        <input type="number" id="seats" name="seats" min="1" max="10" required>
+        <button type="submit">Book</button>
+    </form>
+    <h2>Your Bookings</h2>
+    <ul id="bookingsList"></ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userId = new URLSearchParams(window.location.search).get('userId');
+            document.getElementById('userId').value = userId;
+
+            // Fetch and display user bookings
+            fetch(`/api/bookings/user/${userId}`)
+                .then(response => response.json())
+                .then(bookings => {
+                    const bookingsList = document.getElementById('bookingsList');
+                    bookings.forEach(booking => {
+                        const li = document.createElement('li');
+                        li.textContent = `${booking.movie} - ${booking.seats} seats`;
+                        bookingsList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
